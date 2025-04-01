@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'rest_framework',
+    'messenger',
+    'notofocations'
 ]
 
 # добавляем систему аутентификации по jwt токенам (ссылка на доку: https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html)
