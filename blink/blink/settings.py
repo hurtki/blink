@@ -42,6 +42,13 @@ INSTALLED_APPS = [
     'notofocations'
 ]
 
+
+STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
 # добавляем систему аутентификации по jwt токенам (ссылка на доку: https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html)
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
