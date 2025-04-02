@@ -7,74 +7,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Страница входа</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #a1a1a1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            width: 350px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: bold;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4267B2;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #365899;
-        }
-        .error-message {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-top: 10px;
-            text-align: center;
-            display: none;
-        }
-        .success-message {
-            color: #27ae60;
-            font-size: 14px;
-            margin-top: 10px;
-            text-align: center;
-            display: none;
-        }
-    </style>
+    <!-- подлкючаем стиль -->
+    <link rel="stylesheet" href="{% static "messenger/css/login.css" %}">
 </head>
 <body>
     <div class="login-container">
@@ -91,79 +25,7 @@
         <div id="error-message" class="error-message"></div>
         <div id="success-message" class="success-message"></div>
     </div>
-
-    <script>
-        const api_endpoint = "http://127.0.0.1:8000/api/token/";
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginButton = document.getElementById('login-button');
-            const errorMessage = document.getElementById('error-message');
-            const successMessage = document.getElementById('success-message');
-            
-            loginButton.addEventListener('click', async function() {
-                const username = document.getElementById('username').value.trim();
-                const password = document.getElementById('password').value.trim();
-                
-                // Сброс сообщений
-                errorMessage.style.display = 'none';
-                successMessage.style.display = 'none';
-                
-                // Проверка ввода
-                if (!username || !password) {
-                    errorMessage.textContent = 'Пожалуйста, заполните все поля';
-                    errorMessage.style.display = 'block';
-                    return;
-                }
-                
-                try {
-                    // Отправка запроса на сервер
-                    const response = await fetch(api_endpoint, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            username: username,
-                            password: password
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (!response.ok) {
-                        // Обработка ошибки
-                        if (data.detail === "No active account found with the given credentials") {
-                            errorMessage.textContent = 'Неверное имя пользователя или пароль';
-                        } else {
-                            errorMessage.textContent = 'Ошибка входа: ' + (data.detail || 'Попробуйте позже');
-                        }
-                        errorMessage.style.display = 'block';
-                        return;
-                    }
-                    
-                    // Успешный вход
-                    if (data.refresh && data.access) {
-                        // Сохранение токенов в localStorage
-                        localStorage.setItem('refreshToken', data.refresh);
-                        localStorage.setItem('accessToken', data.access);
-                        
-                        // Показ сообщения об успехе
-                        successMessage.textContent = 'Вход выполнен успешно!';
-                        successMessage.style.display = 'block';
-                        
-                        // Перенаправление на главную страницу через 1 секунду
-                        setTimeout(function() {
-                            // Замените на реальный URL вашей главной страницы
-                            window.location.href = '/dashboard'; 
-                        }, 1000);
-                    }
-                } catch (error) {
-                    console.error('Ошибка при выполнении запроса:', error);
-                    errorMessage.textContent = 'Ошибка соединения с сервером';
-                    errorMessage.style.display = 'block';
-                }
-            });
-        });
-    </script>
+    <!-- подлкючаем скрипт -->
+    <script src="{% static "messenger/js/login.js" %}"></script>
 </body>
 </html>
