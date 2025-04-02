@@ -1,0 +1,184 @@
+:root {
+    --bg-color: #0a0a12;
+    --sidebar-color: #141420;
+    --chat-bg: #0e0e18;
+    --text-color: #f0f0ff;
+    --secondary-text: #a0a0b0;
+    --accent-color: #6a5acd;
+    --accent-glow: 0 0 10px rgba(106, 90, 205, 0.7);
+    --message-out: #6a5acd;
+    --message-in: #1e1e2e;
+    --border-color: #252538;
+    --online-color: #00ff9d;
+    --danger-color: #ff3860;
+    --success-color: #00d1b2;
+    --gradient: linear-gradient(135deg, #6a5acd 0%, #9370db 100%);
+    --card-radius: 16px;
+    --element-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .app-top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    z-index: 1000;
+    -webkit-app-region: drag;
+  }
+  
+  .top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .app-logo {
+    display: flex;
+    align-items: center;
+    font-weight: 800;
+    font-size: 18px;
+  }
+  
+  .logo-blink {
+    color: #7289da;
+    text-shadow: 0 0 10px #7289da;
+    animation: blink 2s infinite alternate;
+  }
+  
+  .top-bar-divider {
+    width: 1px;
+    height: 24px;
+    background-color: var(--border-color);
+    margin: 0 10px;
+  }
+  
+  .window-controls {
+    display: flex;
+    height: 100%;
+    -webkit-app-region: no-drag;
+  }
+  
+  .win-btn {
+    width: 46px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .win-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .win-btn.minimize-btn:hover {
+    color: #faa61a;
+  }
+  
+  .win-btn.maximize-btn:hover {
+    color: #43b581;
+  }
+  
+  .win-btn.close-btn:hover {
+    background: #f04747;
+    color: white;
+  }
+  
+  .app-container {
+    margin-top: 48px;
+    height: calc(100vh - 48px);
+    display: flex;
+  }
+  
+  .chat-screen {
+    display: flex;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .server-sidebar {
+    width: 72px;
+    background-color: var(--sidebar-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    border-right: 1px solid var(--border-color);
+  }
+  
+  .server-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .server-icon:hover {
+    border-radius: 16px;
+  }
+  
+  .server-icon.active {
+    border-radius: 16px;
+    background-color: var(--accent-color);
+  }
+  
+  .add-server {
+    background: var(--gradient);
+    color: white;
+  }
+  
+  @keyframes blink {
+    0% { opacity: 0.7; text-shadow: 0 0 10px #7289da; }
+    100% { opacity: 1; text-shadow: 0 0 15px #7289da, 0 0 30px #7289da; }
+  }
+  
+  @keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+  }
+  
+  @media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      width: 100%;
+      transform: translateX(-100%);
+    }
+    
+    .sidebar.visible {
+      transform: translateX(0);
+    }
+    
+    .chat-header .back-to-contacts {
+      display: block;
+    }
+  }

@@ -1,3 +1,825 @@
 {% load static %}
 
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blink Web</title>
+    <link rel="icon" type="image" href="avatar.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static "messenger/css/chat.css" %}">
+    <link rel="icon" href="icon.ico">
+</head>
+<body>
+
+<div class="app-top-bar glass-effect">
+    <div class="top-bar-left">
+        <div class="app-logo">
+            <span class="logo-part logo-blink">B</span>
+            <span class="logo-part">LINK</span>
+        </div>
+        <div class="top-bar-divider"></div>
+        <div class="app-title" id="appTitle">Blink Web</div>
+    </div>
+    <div class="window-controls">
+        <button class="win-btn minimize-btn" title="Minimize">
+            <i class="fas fa-minus"></i>
+        </button>
+        <button class="win-btn maximize-btn" title="Maximize">
+            <i class="far fa-square"></i>
+        </button>
+        <button class="win-btn close-btn" title="Close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+    
+    <!-- Эффекты фона -->
+    <div class="glow-effect" style="top: 20%; left: 10%;"></div>
+    <div class="glow-effect" style="bottom: 30%; right: 15%;"></div>
+
+    <div class="app-container">
+        <!-- Auth Screen -->
+        <div class="auth-screen" id="authScreen">
+            <div class="auth-container glass-effect">
+                <h1 class="neon-text">Blink Web</h1>
+                <div class="auth-form" id="loginForm">
+                    <h2>Sign In</h2>
+                    <input type="text" id="loginPhone" placeholder="Phone or username">
+                    <input type="password" id="loginPassword" placeholder="Password">
+                    <button onclick="login()">Sign In</button>
+                    <p class="auth-switch neon-text" onclick="showRegisterForm()">Create new account</p>
+                </div>
+                <div class="auth-form hidden" id="registerForm">
+                    <h2>Sign Up</h2>
+                    <input type="text" id="registerName" placeholder="Full name">
+                    <input type="text" id="registerUsername" placeholder="Username">
+                    <input type="password" id="registerPassword" placeholder="Password">
+                    <button onclick="register()">Sign Up</button>
+                    <p class="auth-switch neon-text" onclick="showLoginForm()">Already have an account? Sign In</p>
+                </div>
+            </div>
+        </div>
+        <!-- Chat Screen -->
+        <div class="chat-screen hidden" id="chatScreen">
+            <!-- Server sidebar -->
+            <div class="server-sidebar glass-effect" id="serverSidebar">
+                <div class="server-icon" onclick="openFriendsView()">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="server-separator"></div>
+                <!-- Servers will be added here dynamically -->
+                <div class="server-icon add-server" onclick="openCreateServerModal()">
+                    <i class="fas fa-plus"></i>
+                </div>
+            </div>
+
+            <!-- Main sidebar -->
+            <div class="sidebar glass-effect" id="mainSidebar">
+                <div class="sidebar-header">
+                    <div class="user-avatar" id="userDropdownToggle" onclick="openProfileModal()">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name" id="currentUsername"></div>
+                        <div class="user-status">online</div>
+                    </div>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="chatSearch" placeholder="Search">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="chat-list" id="chatList">
+                    <!-- Chats will be populated here -->
+                </div>
+            </div>
+
+            <!-- Friends view -->
+            <div class="friends-view hidden" id="friendsView">
+                <div class="friends-header">
+                    <button class="mobile-back-btn" onclick="closeFriendsView()">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h3>Friends</h3>
+                    <div class="friends-tabs">
+                        <div class="friends-tab active" data-tab="all">All</div>
+                        <div class="friends-tab" data-tab="online">Online</div>
+                        <div class="friends-tab" data-tab="pending">Pending</div>
+                    </div>
+                </div>
+                <div class="friends-content">
+                    <div class="friend-list" id="friendList">
+                        <!-- Friends will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div id="deleteConfirmModal" class="modal-overlay hidden">
+                <div class="modal-content glass-effect confirm-modal">
+                <div class="confirm-header">
+                    <i class="fas fa-exclamation-triangle warning-icon"></i>
+                    <h3>Delete Message</h3>
+                </div>
+                <p class="confirm-message">Are you sure you want to delete this message? This action cannot be undone.</p>
+                <div class="confirm-buttons">
+                    <button class="confirm-cancel" onclick="closeModal('deleteConfirmModal')">
+                    <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button class="confirm-delete" onclick="confirmDeleteMessage()">
+                    <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+                </div>
+            </div>
+            
+            <!-- Chat area -->
+            <div class="chat-area" id="chatArea">
+                <div class="chat-header glass-effect">
+                    <button class="mobile-back-btn hidden" id="mobileBackBtn">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="chat-subscribers hidden" id="chatSubscribers"></div>
+                    <div class="chat-partner" id="chatPartner">
+                        Select a chat
+                    </div>
+                    <div class="chat-actions">
+                        <button onclick="blockContact()" id="blockBtn" class="hidden">
+                            <i class="fas fa-ban"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="messages-container" id="messagesContainer">
+                    <div class="no-chat-selected">
+                        <p>Select a chat to start messaging</p>
+                    </div>
+                </div>
+                <div class="message-input hidden" id="messageInputContainer">
+                    <button id="voiceMessageBtn" class="voice-btn" onclick="startVoiceRecording()">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <input type="text" id="messageInput" placeholder="Write a message..." onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+            <!-- Server view -->
+            <div class="server-view hidden" id="serverView">
+                <div class="server-channels-sidebar glass-effect" id="serverChannelsSidebar">
+                    <div class="server-name">
+                        <span id="serverName">Server Name</span>
+                        <i class="fas fa-chevron-down server-name-dropdown" onclick="openServerDropdown(event)"></i>
+                    </div>
+                    <div class="channel-category" onclick="toggleCategory(this)">
+                        <i class="fas fa-chevron-right"></i>
+                        <span>TEXT CHANNELS</span>
+                    </div>
+                    <div class="channel-list">
+                        <div class="channel-item active">
+                            <i class="fas fa-hashtag"></i>
+                            <span class="channel-item-name">general</span>
+                        </div>
+                        <div class="channel-item">
+                            <i class="fas fa-hashtag"></i>
+                            <span class="channel-item-name">random</span>
+                        </div>
+                    </div>
+                    <div class="channel-category" onclick="toggleCategory(this)">
+                        <i class="fas fa-chevron-right"></i>
+                        <span>VOICE CHANNELS</span>
+                    </div>
+                    <div class="channel-list">
+                        <div class="channel-item">
+                            <i class="fas fa-volume-up"></i>
+                            <span class="channel-item-name">General</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-area">
+                    <div class="chat-header glass-effect">
+                        <button class="mobile-back-btn hidden" id="serverMobileBackBtn">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <div class="chat-partner">
+                            <i class="fas fa-hashtag"></i>
+                            <span>general</span>
+                        </div>
+                        <div class="chat-actions">
+                            <button onclick="openServerSettings()">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="messages-container" id="serverMessagesContainer">
+                        <!-- Server messages will be added here -->
+                    </div>
+                    <div class="message-input">
+                        <button id="serverVoiceMessageBtn" class="voice-btn" onclick="startVoiceRecording()">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <input type="text" id="serverMessageInput" placeholder="Write a message..." onkeypress="handleServerKeyPress(event)">
+                        <button onclick="sendServerMessage()"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+                <div class="server-members-sidebar glass-effect" id="serverMembersSidebar">
+                    <div class="members-header">ONLINE — 3</div>
+                    <div class="member-list" id="serverMemberList">
+                        <div class="member-item">
+                            <div class="member-avatar">A</div>
+                            <div class="member-name">Admin</div>
+                            <div class="member-status online"></div>
+                        </div>
+                        <div class="member-item">
+                            <div class="member-avatar">U</div>
+                            <div class="member-name">User</div>
+                            <div class="member-status online"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="profile-modal hidden" id="profileModal">
+        <div class="profile-content glass-effect">
+            <div class="profile-close-btn" onclick="closeProfileModal()">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="profile-header">
+                <div class="profile-avatar" onclick="changeAvatar()">
+                    <i class="fas fa-user"></i>
+                    <div class="profile-avatar-edit">Change</div>
+                </div>
+                <div class="profile-name" id="profileName">
+                    <span id="profileNameText"></span>
+                </div>
+                <div class="profile-username" id="profileUsername"></div>
+                <div class="profile-bio" id="profileBio">No bio yet</div>
+            </div>
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="profileChats">0</div>
+                    <div class="profile-stat-label">Chats</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="profileSubs">0</div>
+                    <div class="profile-stat-label">Subscriptions</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="profileFriends">0</div>
+                    <div class="profile-stat-label">Friends</div>
+                </div>
+            </div>
+            <div class="profile-actions">
+                <div class="profile-action-btn" onclick="openEditProfileModal()">
+                    <i class="fas fa-user-edit"></i>
+                    <span>Edit Profile</span>
+                </div>
+                <div class="profile-action-btn" onclick="openSettingsModal()">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="profile-action-btn" onclick="openCreateServerModal()">
+                    <i class="fas fa-plus"></i>
+                    <span>Create Server</span>
+                </div>
+                <div class="profile-action-btn" onclick="openCreateChannelModal()">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Create Channel</span>
+                </div>
+                <div class="profile-action-btn" onclick="openCreateGroupModal()">
+                    <i class="fas fa-users"></i>
+                    <span>Create Group</span>
+                </div>
+                <div class="profile-action-btn" onclick="openPremiumModal()">
+                    <i class="fas fa-crown"></i>
+                    <span>Get Premium</span>
+                    <span class="premium-badge">PRO</span>
+                </div>
+                <div class="profile-action-btn" style="color: var(--danger-color);" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="profile-modal hidden" id="editProfileModal">
+        <div class="profile-content glass-effect">
+            <div class="profile-close-btn" onclick="closeEditProfileModal()">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="profile-header">
+                <h3>Edit Profile</h3>
+            </div>
+            <div class="edit-profile-form">
+                <label for="editName">Name</label>
+                <input type="text" id="editName" placeholder="Your name">
+                
+                <label for="editUsername">Username</label>
+                <input type="text" id="editUsername" placeholder="Username">
+                
+                <label for="editBio">Bio</label>
+                <textarea id="editBio" placeholder="Tell about yourself"></textarea>
+                
+                <div class="edit-profile-buttons">
+                    <button class="secondary" onclick="closeEditProfileModal()">Cancel</button>
+                    <button class="primary" onclick="saveProfile()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="profile-modal hidden" id="settingsModal">
+        <div class="profile-content glass-effect">
+            <div class="profile-close-btn" onclick="closeSettingsModal()">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="profile-header">
+                <h3>Settings</h3>
+            </div>
+            <div class="settings-tabs">
+                <div class="settings-tab active" data-tab="appearance">Appearance</div>
+                <div class="settings-tab" data-tab="notifications">Notifications</div>
+                <div class="settings-tab" data-tab="privacy">Privacy</div>
+                <div class="settings-tab" data-tab="account">Account</div>
+            </div>
+            <div class="settings-tab-content active" id="appearanceTab">
+                <h4>Theme</h4>
+                <div class="theme-option active" data-theme="dark">
+                    <div class="theme-preview" style="background: var(--theme-dark);"></div>
+                    <div class="theme-name">Dark</div>
+                </div>
+                <div class="theme-option" data-theme="purple">
+                    <div class="theme-preview" style="background: var(--theme-purple);"></div>
+                    <div class="theme-name">Purple</div>
+                </div>
+                <div class="theme-option" data-theme="blue">
+                    <div class="theme-preview" style="background: var(--theme-blue);"></div>
+                    <div class="theme-name">Blue</div>
+                </div>
+                <div class="theme-option premium-theme" data-theme="green">
+                    <div class="theme-preview" style="background: var(--theme-green);"></div>
+                    <div class="theme-name">Green</div>
+                    <span class="premium-badge">PREMIUM</span>
+                </div>
+                <div class="theme-option premium-theme" data-theme="red">
+                    <div class="theme-preview" style="background: var(--theme-red);"></div>
+                    <div class="theme-name">Red</div>
+                    <span class="premium-badge">PREMIUM</span>
+                </div>
+                <div class="theme-option premium-theme" data-theme="gold">
+                    <div class="theme-preview" style="background: var(--theme-gold);"></div>
+                    <div class="theme-name">Gold</div>
+                    <span class="premium-badge">PREMIUM</span>
+                </div>
+            </div>
+            <div class="settings-tab-content" id="notificationsTab">
+                <h4>Notification Settings</h4>
+                <div class="profile-action-btn">
+                    <i class="fas fa-bell"></i>
+                    <span>Enable Notifications</span>
+                </div>
+                <div class="profile-action-btn">
+                    <i class="fas fa-comment-alt"></i>
+                    <span>Message Sounds</span>
+                </div>
+                <div class="profile-action-btn">
+                    <i class="fas fa-volume-up"></i>
+                    <span>Notification Volume</span>
+                </div>
+            </div>
+            <div class="settings-tab-content" id="privacyTab">
+                <h4>Privacy Settings</h4>
+                <div class="profile-action-btn">
+                    <i class="fas fa-eye"></i>
+                    <span>Last Seen</span>
+                </div>
+                <div class="profile-action-btn">
+                    <i class="fas fa-user-friends"></i>
+                    <span>Who Can Add Me</span>
+                </div>
+                <div class="profile-action-btn">
+                    <i class="fas fa-lock"></i>
+                    <span>Blocked Users</span>
+                </div>
+            </div>
+            <div class="settings-tab-content" id="accountTab">
+                <h4>Account Settings</h4>
+                <div class="profile-action-btn">
+                    <i class="fas fa-envelope"></i>
+                    <span>Change Email</span>
+                </div>
+                <div class="profile-action-btn">
+                    <i class="fas fa-key"></i>
+                    <span>Change Password</span>
+                </div>
+                <div class="profile-action-btn" style="color: var(--danger-color);">
+                    <i class="fas fa-trash"></i>
+                    <span>Delete Account</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Premium Modal -->
+    <div class="profile-modal hidden" id="premiumModal">
+        <div class="profile-content glass-effect">
+            <div class="profile-close-btn" onclick="closePremiumModal()">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="profile-header">
+                <div class="profile-avatar" style="background: linear-gradient(135deg, #ffd700 0%, #ff9800 100%);">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h3>Get Premium</h3>
+                <p>Unlock exclusive features and themes</p>
+            </div>
+            <div class="profile-actions">
+                <div class="profile-action-btn" style="background: rgba(255, 215, 0, 0.1);">
+                    <i class="fas fa-palette" style="color: #ffd700;"></i>
+                    <span>Exclusive Themes</span>
+                </div>
+                <div class="profile-action-btn" style="background: rgba(255, 215, 0, 0.1);">
+                    <i class="fas fa-ad" style="color: #ffd700;"></i>
+                    <span>No Ads</span>
+                </div>
+                <div class="profile-action-btn" style="background: rgba(255, 215, 0, 0.1);">
+                    <i class="fas fa-id-card" style="color: #ffd700;"></i>
+                    <span>Premium Badge</span>
+                </div>
+                <button class="subscribe-btn" style="margin-top: 1rem;" onclick="purchasePremium()">
+                    Get Premium for $4.99/month
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Server Modal -->
+    <div id="createServerModal" class="modal-overlay hidden">
+        <div class="modal-content glass-effect">
+            <div class="modal-header">
+                <h3 class="modal-title">Создать сервер</h3>
+            </div>
+            
+            <div class="input-field">
+                <input type="text" id="serverNameInput" placeholder=" " required>
+                <label class="floating-label">Название сервера</label>
+                <i class="fas fa-server input-icon"></i>
+            </div>
+            
+            <div class="input-field">
+                <textarea id="serverDescription" placeholder=" " rows="3"></textarea>
+                <label class="floating-label">Описание (необязательно)</label>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('createServerModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="createServer()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Channel Modal -->
+    <div id="createChannelModal" class="modal-overlay hidden">
+        <div class="modal-content glass-effect">
+            <div class="modal-header">
+                <h3 class="modal-title">Создать канал</h3>
+            </div>
+            
+            <div class="input-field">
+                <input type="text" id="channelName" placeholder=" " required>
+                <label class="floating-label">Название канала</label>
+                <i class="fas fa-hashtag input-icon"></i>
+            </div>
+            
+            <div class="input-field">
+                <div class="select-wrapper">
+                    <select id="channelType" required>
+                        <option value="text">Текстовый канал</option>
+                        <option value="voice">Голосовой канал</option>
+                    </select>
+                    <label class="floating-label">Тип канала</label>
+                </div>
+            </div>
+            
+            <div class="input-field">
+                <textarea id="channelTopic" placeholder=" " rows="2"></textarea>
+                <label class="floating-label">Тема (необязательно)</label>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('createChannelModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="createChannel()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Group Modal -->
+    <div id="createGroupModal" class="modal-overlay hidden">
+        <div class="modal-content glass-effect">
+            <div class="modal-header">
+                <h3 class="modal-title">Создать группу</h3>
+            </div>
+            
+            <div class="input-field">
+                <input type="text" id="groupName" placeholder=" " required>
+                <label class="floating-label">Название группы</label>
+                <i class="fas fa-users input-icon"></i>
+            </div>
+            
+            <div class="input-field">
+                <textarea id="groupDescription" placeholder=" " rows="2"></textarea>
+                <label class="floating-label">Описание</label>
+            </div>
+            
+            <div class="input-field">
+                <input type="text" id="groupMembers" placeholder=" " onkeyup="searchUsers()">
+                <label class="floating-label">Добавить участников</label>
+                <i class="fas fa-user-plus input-icon"></i>
+                <div id="userSearchResults" class="search-results"></div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('createGroupModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="createGroup()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Server Settings Modal -->
+    <div class="server-settings-modal hidden" id="serverSettingsModal">
+        <div class="server-settings-content glass-effect">
+            <div class="server-settings-sidebar">
+                <div class="server-settings-tab active" data-tab="overview">Overview</div>
+                <div class="server-settings-tab" data-tab="channels">Channels</div>
+                <div class="server-settings-tab" data-tab="members">Members</div>
+                <div class="server-settings-tab" data-tab="invites">Invites</div>
+                <div class="server-settings-tab" data-tab="roles">Roles</div>
+                <div class="server-settings-tab" data-tab="moderation">Moderation</div>
+                <div class="server-settings-tab danger" data-tab="danger">Danger Zone</div>
+            </div>
+            <div class="server-settings-main">
+                <div class="server-settings-section" id="overviewTab">
+                    <h3>Server Overview</h3>
+                    <p>Manage your server settings and preferences.</p>
+                </div>
+                <div class="server-settings-section hidden" id="channelsTab">
+                    <h3>Channels</h3>
+                    <p>Manage your server channels.</p>
+                </div>
+                <div class="server-settings-section hidden" id="membersTab">
+                    <h3>Members</h3>
+                    <p>Manage your server members.</p>
+                </div>
+                <div class="server-settings-section hidden" id="invitesTab">
+                    <h3>Invites</h3>
+                    <p>Create and manage server invites.</p>
+                </div>
+                <div class="server-settings-section hidden" id="rolesTab">
+                    <h3>Roles</h3>
+                    <p>Manage server roles and permissions.</p>
+                </div>
+                <div class="server-settings-section hidden" id="moderationTab">
+                    <h3>Moderation</h3>
+                    <p>Moderation tools for your server.</p>
+                </div>
+                <div class="server-settings-section hidden" id="dangerTab">
+                    <h3>Danger Zone</h3>
+                    <p>Be careful with these actions.</p>
+                    <button class="subscribe-btn" style="background: var(--danger-color); margin-top: 1rem;" onclick="deleteServer()">
+                        Delete Server
+                    </button>
+                </div>
+            </div>
+            <div class="server-settings-close-btn" onclick="closeServerSettings()">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="custom-context-menu glass-effect" id="contextMenu">
+        <div class="custom-context-menu-item" id="openChatBtn">
+            <i class="fas fa-comment"></i> Open Chat
+        </div>
+        <div class="custom-context-menu-item" id="openProfileBtn">
+            <i class="fas fa-user"></i> Open Profile
+        </div>
+        <div class="custom-context-menu-item" id="addFriendBtn">
+            <i class="fas fa-user-plus"></i> Add Friend
+        </div>
+        <div class="custom-context-menu-item" id="createChannelBtn">
+            <i class="fas fa-bullhorn"></i> Create Channel
+        </div>
+        <div class="custom-context-menu-item" id="createGroupBtn">
+            <i class="fas fa-users"></i> Create Group
+        </div>
+        <div class="custom-context-menu-item" id="createServerBtn">
+            <i class="fas fa-plus"></i> Create Server
+        </div>
+        <div class="custom-context-menu-item" id="toggleFavoriteBtn">
+            <i class="fas fa-star"></i> Add to Favorites
+        </div>
+        <div class="custom-context-menu-item" id="blockUserBtn">
+            <i class="fas fa-ban"></i> Block User
+        </div>
+        <div class="custom-context-menu-item" id="leaveChatBtn">
+            <i class="fas fa-sign-out-alt"></i> Leave Chat
+        </div>
+    </div>
+
+    <!-- Message Context Menu -->
+    <div class="message-context-menu glass-effect" id="messageContextMenu">
+        <div class="custom-context-menu-item" id="copyMessageBtn">
+            <i class="fas fa-copy"></i> Copy
+        </div>
+        <div class="custom-context-menu-item" id="editMessageBtn">
+            <i class="fas fa-edit"></i> Edit
+        </div>
+        <div class="custom-context-menu-item" id="deleteMessageBtn">
+            <i class="fas fa-trash"></i> Delete
+        </div>
+    </div>
+
+    <div id="editMessageModal" class="modal-overlay hidden">
+        <div class="modal-content glass-effect">
+            <div class="modal-header">
+                <h3>Edit Message</h3>
+                <button onclick="closeModal('editMessageModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="editMessageText" class="edit-message-input" placeholder="Edit your message..."></textarea>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal('editMessageModal')">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveEditedMessage()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Call Modal -->
+<div id="callModal" class="modal-overlay hidden">
+    <div class="call-container glass-effect">
+      <div class="call-header">
+        <div class="call-status" id="callStatus">
+          <span class="calling-dots">Calling</span>
+        </div>
+        <div class="call-timer hidden" id="callTimer">00:00</div>
+      </div>
+      
+      <div class="call-main">
+        <div class="call-avatar" id="callAvatar">
+          <div class="avatar-placeholder">
+            <i class="fas fa-user"></i>
+          </div>
+        </div>
+        <div class="call-username" id="callUsername"></div>
+        <div class="call-type" id="callType"></div>
+      </div>
+      
+      <div class="call-controls">
+        <!-- For caller -->
+        <div class="caller-controls hidden" id="callerControls">
+          <button class="call-control-btn cancel-btn" onclick="endCall()">
+            <i class="fas fa-times"></i>
+            <span>Cancel</span>
+          </button>
+        </div>
+        
+        <!-- For receiver -->
+        <div class="receiver-controls hidden" id="receiverControls">
+          <button class="call-control-btn decline-btn" onclick="declineCall()">
+            <i class="fas fa-phone-slash"></i>
+            <span>Decline</span>
+          </button>
+          <button class="call-control-btn accept-btn" onclick="acceptCall()">
+            <i class="fas fa-phone"></i>
+            <span>Accept</span>
+          </button>
+        </div>
+        
+        <!-- During call -->
+        <div class="active-call-controls hidden" id="activeCallControls">
+          <button class="call-control-btn" onclick="toggleMute()" id="muteBtn">
+            <i class="fas fa-microphone"></i>
+            <span>Mute</span>
+          </button>
+          <button class="call-control-btn" onclick="toggleDeafen()" id="deafenBtn">
+            <i class="fas fa-headset"></i>
+            <span>Deafen</span>
+          </button>
+          <button class="call-control-btn end-btn" onclick="endCall()">
+            <i class="fas fa-phone-slash"></i>
+            <span>End</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Incoming Call Notification -->
+  <div class="incoming-call-notification hidden" id="incomingCallNotification">
+    <div class="notification-content">
+      <div class="notification-text">
+        <div class="notification-title">Incoming Call</div>
+        <div class="notification-subtitle" id="incomingCaller"></div>
+      </div>
+      <div class="notification-buttons">
+        <button class="notification-btn decline-btn" onclick="declineCall()">
+          <i class="fas fa-times"></i>
+        </button>
+        <button class="notification-btn accept-btn" onclick="acceptCall()">
+          <i class="fas fa-phone"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <audio id="callSound" loop></audio>
+
+    <!-- Delete Confirmation Modal -->
+<div id="deleteConfirmModal" class="modal-overlay hidden">
+    <div class="modal-content glass-effect confirm-modal">
+      <div class="confirm-header">
+        <i class="fas fa-exclamation-triangle warning-icon"></i>
+        <h3>Delete Message</h3>
+      </div>
+      <p class="confirm-message">Are you sure you want to delete this message? This action cannot be undone.</p>
+      <div class="confirm-buttons">
+        <button class="confirm-cancel" onclick="closeModal('deleteConfirmModal')">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button class="confirm-delete" onclick="confirmDeleteMessage()">
+          <i class="fas fa-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+    <div class="chat-header glass-effect">
+        <button class="mobile-back-btn back-to-contacts" onclick="backToContacts()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        ...
+    </div>
+    <div class="custom-context-menu glass-effect" id="serverContextMenu">
+        <div class="custom-context-menu-item" id="openServerBtn">
+            <i class="fas fa-door-open"></i> Открыть сервер
+        </div>
+        <div class="custom-context-menu-item" id="serverSettingsBtn">
+            <i class="fas fa-cog"></i> Настройки сервера
+        </div>
+        <div class="custom-context-menu-item" id="invitePeopleBtn">
+            <i class="fas fa-user-plus"></i> Пригласить людей
+        </div>
+        <div class="custom-context-menu-item" id="createServerChannelBtn">
+            <i class="fas fa-plus"></i> Создать канал
+        </div>
+        <div class="custom-context-menu-item" id="toggleServerFavoriteBtn">
+            <i class="fas fa-star"></i> В избранное
+        </div>
+        <div class="custom-context-menu-item danger" id="leaveServerBtn">
+            <i class="fas fa-sign-out-alt"></i> Покинуть сервер
+        </div>
+        <!-- Только для владельца/админа -->
+        <div class="custom-context-menu-item danger" id="deleteServerBtn">
+            <i class="fas fa-trash"></i> Удалить сервер
+        </div>
+    </div>
+
+    <div id="callModal" class="modal-overlay hidden">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Incoming Call</h3>
+            <button onclick="closeModal('callModal')">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div id="callerInfo"></div>
+            <div class="call-buttons">
+              <button class="btn-accept" onclick="acceptCall()">
+                <i class="fas fa-phone"></i> Accept
+              </button>
+              <button class="btn-decline" onclick="declineCall()">
+                <i class="fas fa-phone-slash"></i> Decline
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="voiceChatControls" class="voice-chat-controls hidden">
+        <div class="voice-chat-info">Voice chat active</div>
+        <button onclick="stopVoiceChat()">
+          <i class="fas fa-phone-slash"></i> End Call
+        </button>
+      </div>
+      <script src="{% static "messenger/js/chat.js" %}"></script>
+    <!--Хуй тебе а не код пидарюга-->
+</body>
+</html>
 <!-- статические файлы кладешь в папку static а потом в пути к ним пишешь {% static "messenger/(js/css)/файл какой-то.js" %} -->
