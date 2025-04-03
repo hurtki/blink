@@ -19,7 +19,11 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: var(--bg-color);
+    background-image: url("/static/messenger/imgs/background_login.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #f0f0f0; /* fallback color */
     color: var(--text-color);
     height: 100vh;
     margin: 0;
@@ -69,7 +73,7 @@ position: relative;
     background: var(--gradient);
     -webkit-background-clip: text;
     background-clip: text;
-    color: transparent;
+    color: white;
     text-shadow: var(--accent-glow);
 }
 
@@ -98,6 +102,22 @@ position: relative;
     color: var(--text-color);
     font-size: 1rem;
     transition: var(--transition);
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--secondary-text);
+}
+
+.login-link a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
 }
 
 .form-group input:focus {
@@ -186,7 +206,7 @@ position: relative;
 }
 
 .error-message {
-    color: var(--danger-color);
+    color: #c3c3c3;
     font-size: 0.9rem;
     margin-top: 0.5rem;
     text-align: center;
@@ -200,7 +220,7 @@ position: relative;
     margin-top: 0.5rem;
     text-align: center;
     display: none;
-    text-shadow: 0 0 8px rgba(0, 209, 178, 0.5);
+    text-shadow: 0 0 8px rgba(143, 252, 235, 0.5);
 }
 
 .login-background {

@@ -17,7 +17,11 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: var(--bg-color);
+    background-image: url("/static/messenger/imgs/background_login.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #f0f0f0; /* fallback color */
     color: var(--text-color);
     height: 100vh;
     margin: 0;
@@ -63,7 +67,7 @@ body {
     background: var(--gradient);
     -webkit-background-clip: text;
     background-clip: text;
-    color: transparent;
+    color: white;
     text-shadow: var(--accent-glow);
 }
 
@@ -215,7 +219,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%);
+    background-image: url("/static/messenger/imgs/background_login.jpg");
     z-index: -1;
 }
 
