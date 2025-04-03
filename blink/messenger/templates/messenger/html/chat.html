@@ -12,55 +12,11 @@
     <link rel="icon" href="icon.ico">
 </head>
 <body>
-
-<div class="app-top-bar glass-effect">
-    <div class="top-bar-left">
-        <div class="app-logo">
-            <span class="logo-part logo-blink">B</span>
-            <span class="logo-part">LINK</span>
-        </div>
-        <div class="top-bar-divider"></div>
-        <div class="app-title" id="appTitle">Blink Web</div>
-    </div>
-    <div class="window-controls">
-        <button class="win-btn minimize-btn" title="Minimize">
-            <i class="fas fa-minus"></i>
-        </button>
-        <button class="win-btn maximize-btn" title="Maximize">
-            <i class="far fa-square"></i>
-        </button>
-        <button class="win-btn close-btn" title="Close">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-</div>
     
     <!-- Эффекты фона -->
     <div class="glow-effect" style="top: 20%; left: 10%;"></div>
     <div class="glow-effect" style="bottom: 30%; right: 15%;"></div>
 
-    <div class="app-container">
-        <!-- Auth Screen -->
-        <div class="auth-screen" id="authScreen">
-            <div class="auth-container glass-effect">
-                <h1 class="neon-text">Blink Web</h1>
-                <div class="auth-form" id="loginForm">
-                    <h2>Sign In</h2>
-                    <input type="text" id="loginPhone" placeholder="Phone or username">
-                    <input type="password" id="loginPassword" placeholder="Password">
-                    <button onclick="login()">Sign In</button>
-                    <p class="auth-switch neon-text" onclick="showRegisterForm()">Create new account</p>
-                </div>
-                <div class="auth-form hidden" id="registerForm">
-                    <h2>Sign Up</h2>
-                    <input type="text" id="registerName" placeholder="Full name">
-                    <input type="text" id="registerUsername" placeholder="Username">
-                    <input type="password" id="registerPassword" placeholder="Password">
-                    <button onclick="register()">Sign Up</button>
-                    <p class="auth-switch neon-text" onclick="showLoginForm()">Already have an account? Sign In</p>
-                </div>
-            </div>
-        </div>
         <!-- Chat Screen -->
         <div class="chat-screen hidden" id="chatScreen">
             <!-- Server sidebar -->
