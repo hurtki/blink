@@ -20,6 +20,10 @@ body {
     background-image: url("/static/messenger/imgs/background_login.jpg");
     background-size: cover;
     background-position: center;
+    -webkit-user-select: none; /* Chrome/Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE/Edge */
+    user-select: none; /* Стандартный синтаксис */
     background-repeat: no-repeat;
     background-color: #f0f0f0; /* fallback color */
     color: var(--text-color);

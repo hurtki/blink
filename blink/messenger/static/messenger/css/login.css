@@ -104,14 +104,21 @@ position: relative;
     transition: var(--transition);
 }
 
+.no-select {
+    -webkit-user-select: none; /* Chrome/Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE/Edge */
+    user-select: none; /* Стандартный синтаксис */
+  }
+
 .login-link {
     text-align: center;
     margin-top: 20px;
-    color: var(--secondary-text);
+    color: #ffffff;
 }
 
 .login-link a {
-    color: var(--accent-color);
+    color: #a799ff;
     text-decoration: none;
     font-weight: 500;
 }
