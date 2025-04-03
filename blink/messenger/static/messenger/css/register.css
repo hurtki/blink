@@ -15,13 +15,15 @@
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* не трогайте нахуй root и боди */
-
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background-image: url("/static/messenger/imgs/background_login.jpg");
     background-size: cover;
     background-position: center;
+    -webkit-user-select: none; /* Chrome/Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE/Edge */
+    user-select: none; /* Стандартный синтаксис */
     background-repeat: no-repeat;
     background-color: #f0f0f0; /* fallback color */
     color: var(--text-color);
@@ -34,25 +36,22 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-.login-container {
-
-background-color: 2.5rem;
-padding: 2.5rem;
-border-radius: var(--card-radius);
-width: 350px;
-max-width: 300px;
-text-align: center;
-box-shadow: 0 0 30px rgba(106, 90, 205, 0.3);
-backdrop-filter: blur(10px);
-border: 1px solid var(--border-color);
-z-index: 1;
-animation: fadeIn 0.5s ease-out;
-position: relative;
-
+.register-container {
+    background-color: 2.5rem;
+    padding: 2.5rem;
+    border-radius: var(--card-radius);
+    width: 350px;
+    max-width: 300px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(106, 90, 205, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    z-index: 1;
+    animation: fadeIn 0.5s ease-out;
+    position: relative;
 }
 
-.login-container::before {
-    
+.register-container::before {
     content: '';
     position: absolute;
     top: -2px;
@@ -63,10 +62,9 @@ position: relative;
     background: var(--gradient);
     z-index: -1;
     opacity: 0.3;
-
 }
 
-.login-container h1 {
+.register-container h1 {
     margin-bottom: 1.5rem;
     font-size: 2.2rem;
     font-weight: 700;
@@ -78,11 +76,9 @@ position: relative;
 }
 
 .form-group {
-
     margin-bottom: 1.2rem;
     text-align: left;
     position: relative;
-
 }
 
 .form-group label {
@@ -104,69 +100,41 @@ position: relative;
     transition: var(--transition);
 }
 
-.no-select {
-    -webkit-user-select: none; /* Chrome/Safari */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE/Edge */
-    user-select: none; /* Стандартный синтаксис */
-  }
-
-.login-link {
-    text-align: center;
-    margin-top: 20px;
-    color: #ffffff;
-}
-
-.login-link a {
-    color: #a799ff;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.login-link a:hover {
-    text-decoration: underline;
-}
-
 .form-group input:focus {
-
     outline: none;
     border-color: var(--accent-color);
     box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.3);
-
 }
-/* кнопка для входа */
-#login-button {
+
+/* Да пиздец я заебался */
+#register-button {
     width: 100%;
     padding: 14px 24px;
     margin-top: 20px;
-
-    background: linear-gradient(135deg, #6a5acd 0%, #9370db 100%);
+    background: var(--gradient);
     color: white;
     border: none;
     border-radius: var(--element-radius);
-
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: 16px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-
     box-shadow: 0 4px 15px rgba(106, 90, 205, 0.4);
     cursor: pointer;
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-
 }
-/* ховер эффект для кнопки входа  */
-#login-button:hover {
+
+#register-button:hover {
     transform: translateY(1px);
     box-shadow: 0 2px 10px rgba(106, 90, 205, 0.8);
 }
 
-#login-button::after {
+/* Эффект докса */
+#register-button::after {
     content: '';
     position: absolute;
     top: 0;
@@ -183,16 +151,17 @@ position: relative;
     transition: transform 0.6s ease;
 }
 
-#login-button:hover::after {
+#register-button:hover::after {
     transform: translateX(100%);
 }
 
-#login-button.loading {
+/* Загруз очка */
+#register-button.loading {
     position: relative;
     color: transparent;
 }
 
-#login-button.loading::before {
+#register-button.loading::before {
     content: '';
     position: absolute;
     top: 50%;
@@ -206,14 +175,32 @@ position: relative;
     transform: translate(-50%, -50%);
 }
 
-/*Это анимация для логина, лучше ее не трогать*/
-
-@keyframes spin {
-    to { transform: translate(-50%, -50%) rotate(360deg); }
+.error-text {
+    color: var(--danger-color);
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+    display: none;
+    text-shadow: 0 0 5px rgba(255, 56, 96, 0.3);
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
 }
 
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+    20%, 40%, 60%, 80% { transform: translateX(3px); }
+}
+
+.form-group input:invalid {
+    border-color: var(--danger-color);
+}
+
+.form-group input:invalid:focus {
+    box-shadow: 0 0 0 3px rgba(255, 56, 96, 0.3);
+}
+
+/* ошибочка и успех ебать */
 .error-message {
-    color: #c3c3c3;
+    color: var(--danger-color);
     font-size: 0.9rem;
     margin-top: 0.5rem;
     text-align: center;
@@ -227,20 +214,20 @@ position: relative;
     margin-top: 0.5rem;
     text-align: center;
     display: none;
-    text-shadow: 0 0 8px rgba(143, 252, 235, 0.5);
+    text-shadow: 0 0 8px rgba(0, 209, 178, 0.5);
 }
 
-.login-background {
+.register-background {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%);
+    background-image: url("/static/messenger/imgs/background_login.jpg");
     z-index: -1;
 }
 
-.login-background::before {
+.register-background::before {
     content: '';
     position: absolute;
     top: 0;
@@ -253,7 +240,27 @@ position: relative;
     animation: float 15s ease-in-out infinite alternate;
 }
 
-/* Анимации чтоб не втыкали */
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--secondary-text);
+}
+
+.login-link a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+/* Анимации */
+@keyframes spin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -265,14 +272,14 @@ position: relative;
     100% { transform: translate(0, 0); }
 }
 
-/* Адаптивненькие настройечки */
+/* Адаптация настроек ебанных */
 @media (max-width: 480px) {
-    .login-container {
+    .register-container {
         padding: 1.5rem;
         width: 95%;
     }
     
-    .login-container h1 {
+    .register-container h1 {
         font-size: 1.8rem;
     }
     
@@ -280,7 +287,7 @@ position: relative;
         padding: 0.8rem;
     }
     
-    .login-button {
+    #register-button {
         padding: 0.8rem;
     }
 }

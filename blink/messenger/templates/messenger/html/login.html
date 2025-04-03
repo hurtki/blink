@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Страница входа</title>
+    <link rel="icon" href="{% static "messenger\imgs\favicon.ico" %}" type="image/x-icon">
     <!-- подлкючаем стиль -->
     <link rel="stylesheet" href="{% static "messenger/css/login.css" %}">
 </head>
@@ -21,9 +22,11 @@
             <label for="password">Пароль</label>
             <input type="password" id="password" placeholder="Введите пароль">
         </div>
+        <!-- кнопка для входа -->
         <button id="login-button">Войти</button>
         <div id="error-message" class="error-message"></div>
         <div id="success-message" class="success-message"></div>
+        <p class="login-link">Еще нет аккаунта? <a href="{% url "register" %}">Регистрация</a></p>
     </div>
     <!-- подлкючаем скрипт -->
     <script src="{% static "messenger/js/login.js" %}"></script>

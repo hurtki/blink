@@ -59,7 +59,7 @@ const api_endpoint = "http://127.0.0.1:8000/api/token/";
                         // Перенаправление на главную страницу через 1 секунду
                         setTimeout(function() {
                             // Замените на реальный URL вашей главной страницы
-                            window.location.href = '/dashboard'; 
+                            window.location.href = '/messenger/chat'; 
                         }, 1000);
                     }
                 } catch (error) {

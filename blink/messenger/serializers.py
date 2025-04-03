@@ -25,6 +25,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
+
 class ChatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
@@ -63,3 +64,4 @@ class ChatSerializer(serializers.ModelSerializer):
         # получаем послежнее сообщение в чате 
         last_msg = obj.message_set.order_by("-sent_at").first()
         return MessageSerializer(last_msg).data if last_msg else None
+

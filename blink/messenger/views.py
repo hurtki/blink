@@ -1,3 +1,4 @@
+# 3 библиотеки в проекте django, django-rest-framwork, djangorestframework_simplejwt
 from django.shortcuts import render
 from rest_framework import generics
 # импортируем сприализаторы

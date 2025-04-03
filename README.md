@@ -1,4 +1,2 @@
 # blink
 messenger backend application
-
-
